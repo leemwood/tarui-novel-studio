@@ -65,6 +65,20 @@ func main() {
 
 		r.Get("/api/plans", handler.HandlePlans)
 		r.Post("/api/plans", handler.HandlePlans)
+
+		// Chat
+		r.Post("/api/chat", handler.HandleChat)
+
+		// Plan generation
+		r.Post("/api/plans/generate", handler.HandleGeneratePlan)
+
+		// Settings
+		r.Get("/api/settings", handler.HandleGetSettings)
+		r.Put("/api/settings", handler.HandleSaveSettings)
+
+		// Export
+		r.Get("/api/export/cursorrules", handler.HandleExportCursorRules)
+		r.Get("/api/export/prompt", handler.HandleExportPrompt)
 	})
 
 	port := os.Getenv("PORT")

@@ -35,7 +35,7 @@ export default function ChatPanel() {
       await useProjectStore.getState().loadProjectData(proj.id);
     }
     await saveMessage('user', content);
-    await sendMessage(content);
+    await sendMessage(content, currentProject?.id || '');
   };
 
   if (!currentProject) {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useProjectStore } from '../../stores/useProjectStore';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -8,11 +8,13 @@ import { useChatStore } from '../../stores/useChatStore';
 
 export default function TopBar() {
   const { projects, currentProject, setCurrentProject, createProject, loadProjectData, toggleSidebar, toggleRightPanel } = useProjectStore();
-  const { settings, setSettings } = useChatStore();
+  const { settings, setSettings, loadSettings, saveSettings } = useChatStore();
   const [showNewProj, setShowNewProj] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [newName, setNewName] = useState('');
   const [newDesc, setNewDesc] = useState('');
+
+  useEffect(() => { loadSettings(); }, []);
 
   const handleCreate = async () => {
     if (!newName.trim()) return;
@@ -81,7 +83,10 @@ export default function TopBar() {
       </Dialog>
 
       {/* API Settings Dialog */}
-      <Dialog open={showSettings} onOpenChange={setShowSettings}>
+      <Dialog open={showSettings} onOpenChange={(open) => {
+        if (!open) saveSettings({});
+        setShowSettings(open);
+      }}>
         <DialogHeader><DialogTitle>API 设置</DialogTitle></DialogHeader>
         <div className="space-y-3">
           <div>
@@ -89,7 +94,7 @@ export default function TopBar() {
             <select
               className="w-full h-9 rounded-md border border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-700 px-2 text-sm"
               value={settings.apiProvider}
-              onChange={e => setSettings({ apiProvider: e.target.value as 'openai' | 'claude' })}
+              onChange={e => { setSettings({ apiProvider: e.target.value as 'openai' | 'claude' }); saveSettings({ apiProvider: e.target.value as 'openai' | 'claude' }); }}
             >
               <option value="openai">OpenAI</option>
               <option value="claude">Claude</option>
@@ -101,12 +106,13 @@ export default function TopBar() {
           </div>
           <div>
             <label className="text-xs text-zinc-500 dark:text-zinc-400">模型</label>
-            <Input value={settings.model} onChange={e => setSettings({ model: e.target.value })} />
+            <Input value={settings.model} onChange={e => { setSettings({ model: e.target.value }); saveSettings({ model: e.target.value }); }} />
           </div>
           <div>
             <label className="text-xs text-zinc-500 dark:text-zinc-400">API Base URL</label>
-            <Input value={settings.baseUrl} onChange={e => setSettings({ baseUrl: e.target.value })} />
+            <Input value={settings.baseUrl} onChange={e => { setSettings({ baseUrl: e.target.value }); saveSettings({ baseUrl: e.target.value }); }} />
           </div>
+          <Button onClick={() => { saveSettings({}); setShowSettings(false); }} className="w-full">保存</Button>
         </div>
       </Dialog>
     </>

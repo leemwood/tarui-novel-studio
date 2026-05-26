@@ -28,6 +28,13 @@ func migrate() error {
 			password_hash TEXT NOT NULL,
 			created_at TEXT NOT NULL DEFAULT (datetime('now'))
 		)`,
+		`CREATE TABLE IF NOT EXISTS settings (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			api_provider TEXT NOT NULL DEFAULT 'openai',
+			api_key TEXT NOT NULL DEFAULT '',
+			api_model TEXT NOT NULL DEFAULT 'gpt-4o',
+			api_base_url TEXT NOT NULL DEFAULT 'https://api.openai.com/v1'
+		)`,
 		`CREATE TABLE IF NOT EXISTS projects (
 			id TEXT PRIMARY KEY,
 			name TEXT NOT NULL,
