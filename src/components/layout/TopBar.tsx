@@ -3,11 +3,11 @@ import { useProjectStore } from '../../stores/useProjectStore';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Dialog, DialogHeader, DialogTitle } from '../ui/dialog';
-import { Plus, Settings, Download } from 'lucide-react';
+import { Menu, Plus, Settings, PanelRight, Download } from 'lucide-react';
 import { useChatStore } from '../../stores/useChatStore';
 
 export default function TopBar() {
-  const { projects, currentProject, setCurrentProject, createProject, loadProjectData } = useProjectStore();
+  const { projects, currentProject, setCurrentProject, createProject, loadProjectData, toggleSidebar, toggleRightPanel } = useProjectStore();
   const { settings, setSettings } = useChatStore();
   const [showNewProj, setShowNewProj] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -33,11 +33,16 @@ export default function TopBar() {
 
   return (
     <>
-      <header className="h-12 border-b border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 flex items-center px-4 gap-3 shrink-0">
+      <header className="h-12 border-b border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 flex items-center px-2 sm:px-4 gap-1 sm:gap-3 shrink-0">
+        {/* Hamburger menu (mobile) / spacer (desktop) */}
+        <Button variant="ghost" size="icon" onClick={toggleSidebar} className="lg:hidden" title="菜单">
+          <Menu className="h-4 w-4" />
+        </Button>
+
         {/* Project selector */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2 min-w-0 flex-1 lg:flex-none">
           <select
-            className="h-8 rounded-md border border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-700 px-2 text-sm text-zinc-800 dark:text-zinc-100"
+            className="h-8 max-w-[140px] sm:max-w-[200px] rounded-md border border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-700 px-1 sm:px-2 text-xs sm:text-sm text-zinc-800 dark:text-zinc-100 truncate"
             value={currentProject?.id || ''}
             onChange={(e) => e.target.value && handleProjectSwitch(e.target.value)}
           >
@@ -51,11 +56,14 @@ export default function TopBar() {
           </Button>
         </div>
 
-        <div className="flex-1" />
+        <div className="flex-1 hidden lg:block" />
 
         {/* Right actions */}
-        <Button variant="ghost" size="sm" onClick={() => setShowSettings(true)}>
-          <Settings className="h-4 w-4 mr-1" /> API设置
+        <Button variant="ghost" size="sm" onClick={() => setShowSettings(true)} className="hidden sm:inline-flex">
+          <Settings className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">API设置</span>
+        </Button>
+        <Button variant="ghost" size="icon" onClick={toggleRightPanel} className="hidden lg:inline-flex" title="侧面板">
+          <PanelRight className="h-4 w-4" />
         </Button>
         <Button variant="ghost" size="icon" title="导出" onClick={() => useProjectStore.getState().setActiveNav('plan')}>
           <Download className="h-4 w-4" />

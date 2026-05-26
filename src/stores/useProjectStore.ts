@@ -109,11 +109,18 @@ interface ProjectStore {
   
   // Loading states
   loading: boolean;
-  
+
+  // UI state (responsive)
+  sidebarOpen: boolean;
+  rightPanelOpen: boolean;
+
   // Actions
   setActiveNav: (nav: NavSection) => void;
   setCurrentProject: (project: Project | null) => void;
   setSelectedEntityId: (id: string | null) => void;
+  toggleSidebar: () => void;
+  toggleRightPanel: () => void;
+  closeSidebar: () => void;
   
   // CRUD
   loadProjects: () => Promise<void>;
@@ -149,12 +156,18 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
   chapters: [],
   messages: [],
   plans: [],
-  
+
   loading: false,
+
+  sidebarOpen: false,
+  rightPanelOpen: false,
   
-  setActiveNav: (nav) => set({ activeNav: nav, selectedEntityId: null, selectedRelationshipId: null, selectedPlanId: null }),
+  setActiveNav: (nav) => set({ activeNav: nav, selectedEntityId: null, selectedRelationshipId: null, selectedPlanId: null, sidebarOpen: false }),
   setCurrentProject: (project) => set({ currentProject: project }),
   setSelectedEntityId: (id) => set({ selectedEntityId: id }),
+  toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
+  toggleRightPanel: () => set((s) => ({ rightPanelOpen: !s.rightPanelOpen })),
+  closeSidebar: () => set({ sidebarOpen: false }),
   
   loadProjects: async () => {
     const projects = await invoke<Project[]>('list_projects');
