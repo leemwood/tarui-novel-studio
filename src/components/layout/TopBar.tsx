@@ -3,11 +3,11 @@ import { useProjectStore } from '../../stores/useProjectStore';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Dialog, DialogHeader, DialogTitle } from '../ui/dialog';
-import { Plus, Settings, Download, LogOut } from 'lucide-react';
+import { Plus, Settings, Download } from 'lucide-react';
 import { useChatStore } from '../../stores/useChatStore';
 
 export default function TopBar() {
-  const { projects, currentProject, setCurrentProject, createProject, loadProjects, loadProjectData } = useProjectStore();
+  const { projects, currentProject, setCurrentProject, createProject, loadProjectData } = useProjectStore();
   const { settings, setSettings } = useChatStore();
   const [showNewProj, setShowNewProj] = useState(false);
   const [showSettings, setShowSettings] = useState(false);

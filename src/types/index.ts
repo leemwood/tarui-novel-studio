@@ -63,21 +63,21 @@ export interface EntityContent {
   background?: string;
   abilities?: string;
   // item
-  description?: string;
-  properties?: string;
+  item_description?: string;
+  item_properties?: string;
   // location
-  description?: string;
+  location_description?: string;
   inhabitants?: string;
   significance?: string;
   // lore
-  summary?: string;
-  details?: string;
+  lore_summary?: string;
+  lore_details?: string;
   // plot
-  summary?: string;
+  plot_summary?: string;
   arc?: string;
   status?: string;
   // chapter
-  summary?: string;
+  chapter_summary?: string;
   scenes?: string[];
   word_count?: number;
 }

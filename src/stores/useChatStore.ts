@@ -44,7 +44,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   clearChat: () => set({ chatMessages: [] }),
   
   sendMessage: async (content) => {
-    const { addMessage, settings } = get();
+    const { addMessage } = get();
     
     // Add user message
     addMessage({ role: 'user', content });

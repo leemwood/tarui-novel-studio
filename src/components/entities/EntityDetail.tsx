@@ -3,9 +3,7 @@ import { useProjectStore } from '../../stores/useProjectStore';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Save, Trash2, ArrowLeft } from 'lucide-react';
-import type { EntityContent } from '../../types';
 
 export default function EntityDetail() {
   const { entities, selectedEntityId, setSelectedEntityId, updateEntity, deleteEntity, loadEntities } = useProjectStore();

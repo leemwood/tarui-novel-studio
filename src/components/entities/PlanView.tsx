@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { useProjectStore } from '../../stores/useProjectStore';
 import { Button } from '../ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { FileText, Download, Plus } from 'lucide-react';
+import { FileText, Plus } from 'lucide-react';
 
 export default function PlanView() {
   const { plans, entities, relationships, currentProject, savePlan } = useProjectStore();

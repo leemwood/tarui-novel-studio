@@ -57,7 +57,7 @@ function mockInvoke<T>(cmd: string, args?: Record<string, unknown>): T {
   if (cmd === 'get_entity') return (mockDb.entities as Entity[]).find(e => e.id === args?.id) as T;
   if (cmd === 'update_entity') {
     const e = (mockDb.entities as Entity[]).find(e => e.id === args?.id);
-    if (e) { e.name = args?.name as string; e.entity_type = args?.entity_type as string; e.content = args?.content as string; e.updated_at = now; }
+    if (e) { e.name = args?.name as string; e.entity_type = args?.entity_type as Entity['entity_type']; e.content = args?.content as string; e.updated_at = now; }
     return e as T;
   }
   if (cmd === 'delete_entity') {

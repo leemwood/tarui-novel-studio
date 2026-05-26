@@ -2,9 +2,8 @@ import { useState, useEffect } from 'react';
 import { useProjectStore } from '../../stores/useProjectStore';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { Textarea } from '../ui/textarea';
 import { Dialog, DialogHeader, DialogTitle } from '../ui/dialog';
-import { Plus, Trash2, ArrowRight } from 'lucide-react';
+import { Plus, ArrowRight } from 'lucide-react';
 
 export default function RelationshipGraph() {
   const { relationships, entities, loadRelationships, createRelationship, loadEntities } = useProjectStore();

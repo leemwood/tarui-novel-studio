@@ -1,14 +1,11 @@
 import { useState } from 'react';
 import { useProjectStore } from '../../stores/useProjectStore';
 import { Button } from '../ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Textarea } from '../ui/textarea';
-import { FileJson, FileText, Copy, Download } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import { FileJson, Copy, Download } from 'lucide-react';
 
 export default function ExportPanel() {
-  const { currentProject, entities, relationships } = useProjectStore();
+  const { currentProject, entities } = useProjectStore();
   const [mode, setMode] = useState<'cursorrules' | 'prompt'>('cursorrules');
   const [copied, setCopied] = useState(false);
 
