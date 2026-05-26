@@ -69,6 +69,29 @@ jobs:
           rm -rf src-tauri/gen/android
           npx tauri android init
           npx tauri android build --apk
+
+      - name: Sign APK with debug key
+        run: |
+          BUILD_TOOLS="$ANDROID_HOME/build-tools/35.0.0"
+          export PATH="$BUILD_TOOLS:$PATH"
+
+          APK_DIR="src-tauri/gen/android/app/build/outputs/apk/universal"
+          APK=$(ls "$APK_DIR"/release/*.apk 2>/dev/null || ls "$APK_DIR"/debug/*.apk)
+          echo "Found APK: $APK"
+
+          KEYSTORE="$HOME/.android/debug.keystore"
+          if [ ! -f "$KEYSTORE" ]; then
+            keytool -genkey -v -keystore "$KEYSTORE" \
+              -alias androiddebugkey -storepass android -keypass android \
+              -keyalg RSA -keysize 2048 -validity 10000 \
+              -dname "CN=Android Debug,O=Android,C=US"
+          fi
+
+          SIGNED="${APK_DIR}/app-universal-signed.apk"
+          zipalign -f -p 4 "$APK" "$SIGNED"
+          apksigner sign --ks "$KEYSTORE" --ks-pass pass:android \
+            --ks-key-alias androiddebugkey "$SIGNED"
+          echo "Signed APK: $SIGNED"
         env:
           ANDROID_HOME: ${{ env.ANDROID_HOME }}
           ANDROID_SDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}
@@ -78,7 +101,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: tarui-novel-studio-android
-          path: src-tauri/gen/android/app/build/outputs/apk/universal/release/*.apk
+          path: |
+            src-tauri/gen/android/app/build/outputs/apk/universal/release/*.apk
+            src-tauri/gen/android/app/build/outputs/apk/universal/*signed*
           if-no-files-found: warn
 
   # ─── Linux (AppImage / .deb) ─────────────────────────────────
