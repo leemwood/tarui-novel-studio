@@ -1,13 +1,13 @@
 import { useEffect, useRef } from 'react';
-import { Bot } from 'lucide-react';
+import { Bot, Trash2, Eraser } from 'lucide-react';
 import { useProjectStore } from '../../stores/useProjectStore';
 import { useChatStore } from '../../stores/useChatStore';
 import MessageBubble from './MessageBubble';
 import ChatInput from './ChatInput';
 
 export default function ChatPanel() {
-  const { currentProject, messages, loadMessages, saveMessage } = useProjectStore();
-  const { chatMessages, isProcessing, sendMessage } = useChatStore();
+  const { currentProject, messages, loadMessages, saveMessage, clearMessages } = useProjectStore();
+  const { chatMessages, isProcessing, sendMessage, clearChat } = useChatStore();
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -49,8 +49,26 @@ export default function ChatPanel() {
     );
   }
 
+  const handleClearChat = async () => {
+    clearChat();
+    await clearMessages();
+  };
+
   return (
     <div className="flex-1 flex flex-col bg-white dark:bg-zinc-800 min-w-0">
+      {/* Chat header */}
+      <div className="h-10 border-b border-zinc-200 dark:border-zinc-700 flex items-center px-4 gap-2 shrink-0">
+        <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300 truncate flex-1">
+          {currentProject.name}
+        </span>
+        <button
+          onClick={handleClearChat}
+          className="inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-red-500 transition-colors"
+          title="清除聊天记录"
+        >
+          <Eraser className="h-3.5 w-3.5" /> 清除
+        </button>
+      </div>
       {/* Messages */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto py-4 space-y-2">
         {allMessages.length === 0 && (
@@ -76,7 +94,7 @@ export default function ChatPanel() {
       </div>
 
       {/* Input */}
-      <ChatInput onSend={handleSend} disabled={isProcessing} />
+      <ChatInput onSend={handleSend} disabled={isProcessing} projectId={currentProject?.id} />
     </div>
   );
 }

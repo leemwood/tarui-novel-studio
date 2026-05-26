@@ -3,18 +3,13 @@ import { useProjectStore } from '../../stores/useProjectStore';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Dialog, DialogHeader, DialogTitle } from '../ui/dialog';
-import { Menu, Plus, Settings, Download } from 'lucide-react';
-import { useChatStore } from '../../stores/useChatStore';
+import { Menu, Plus, Download } from 'lucide-react';
 
 export default function TopBar() {
   const { projects, currentProject, setCurrentProject, createProject, loadProjectData, toggleSidebar } = useProjectStore();
-  const { settings, setSettings, loadSettings, saveSettings } = useChatStore();
   const [showNewProj, setShowNewProj] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
   const [newName, setNewName] = useState('');
   const [newDesc, setNewDesc] = useState('');
-
-  useEffect(() => { loadSettings(); }, []);
 
   const handleCreate = async () => {
     if (!newName.trim()) return;
@@ -61,9 +56,6 @@ export default function TopBar() {
         <div className="flex-1 hidden lg:block" />
 
         {/* Right actions */}
-        <Button variant="ghost" size="icon" onClick={() => setShowSettings(true)} title="API设置">
-          <Settings className="h-4 w-4" />
-        </Button>
         <Button variant="ghost" size="icon" title="导出" onClick={() => useProjectStore.getState().setActiveNav('plan')}>
           <Download className="h-4 w-4" />
         </Button>
@@ -76,49 +68,6 @@ export default function TopBar() {
           <Input placeholder="项目名称" value={newName} onChange={e => setNewName(e.target.value)} />
           <Input placeholder="项目描述（可选）" value={newDesc} onChange={e => setNewDesc(e.target.value)} />
           <Button onClick={handleCreate} className="w-full">创建</Button>
-        </div>
-      </Dialog>
-
-      {/* API Settings Dialog */}
-      <Dialog open={showSettings} onOpenChange={(open) => {
-        if (!open) saveSettings({});
-        setShowSettings(open);
-      }}>
-        <DialogHeader><DialogTitle>API 设置</DialogTitle></DialogHeader>
-        <div className="space-y-3">
-          <div>
-            <label className="text-xs text-zinc-500 dark:text-zinc-400">API 提供商</label>
-            <select
-              className="w-full h-9 rounded-md border border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-700 px-2 text-sm"
-              value={settings.apiProvider}
-              onChange={e => {
-                const v = e.target.value;
-                setSettings({ apiProvider: v as any });
-                saveSettings({ apiProvider: v as any });
-                if (v === 'deepseek') {
-                  setSettings({ model: 'deepseek-v4-flash', baseUrl: 'https://api.deepseek.com/v1' });
-                  saveSettings({ model: 'deepseek-v4-flash', baseUrl: 'https://api.deepseek.com/v1' });
-                }
-              }}
-            >
-              <option value="deepseek">DeepSeek</option>
-              <option value="openai">OpenAI</option>
-              <option value="claude">Claude</option>
-            </select>
-          </div>
-          <div>
-            <label className="text-xs text-zinc-500 dark:text-zinc-400">API Key</label>
-            <Input type="password" placeholder="sk-..." value={settings.apiKey} onChange={e => setSettings({ apiKey: e.target.value })} />
-          </div>
-          <div>
-            <label className="text-xs text-zinc-500 dark:text-zinc-400">模型</label>
-            <Input value={settings.model} onChange={e => { setSettings({ model: e.target.value }); saveSettings({ model: e.target.value }); }} />
-          </div>
-          <div>
-            <label className="text-xs text-zinc-500 dark:text-zinc-400">API Base URL</label>
-            <Input value={settings.baseUrl} onChange={e => { setSettings({ baseUrl: e.target.value }); saveSettings({ baseUrl: e.target.value }); }} />
-          </div>
-          <Button onClick={() => { saveSettings({}); setShowSettings(false); }} className="w-full">保存</Button>
         </div>
       </Dialog>
     </>
