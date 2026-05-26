@@ -3,11 +3,11 @@ import { useProjectStore } from '../../stores/useProjectStore';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Dialog, DialogHeader, DialogTitle } from '../ui/dialog';
-import { Menu, Plus, Settings, PanelRight, Download } from 'lucide-react';
+import { Menu, Plus, Settings, Download } from 'lucide-react';
 import { useChatStore } from '../../stores/useChatStore';
 
 export default function TopBar() {
-  const { projects, currentProject, setCurrentProject, createProject, loadProjectData, toggleSidebar, toggleRightPanel } = useProjectStore();
+  const { projects, currentProject, setCurrentProject, createProject, loadProjectData, toggleSidebar } = useProjectStore();
   const { settings, setSettings, loadSettings, saveSettings } = useChatStore();
   const [showNewProj, setShowNewProj] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -63,9 +63,6 @@ export default function TopBar() {
         {/* Right actions */}
         <Button variant="ghost" size="sm" onClick={() => setShowSettings(true)} className="hidden sm:inline-flex">
           <Settings className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">API设置</span>
-        </Button>
-        <Button variant="ghost" size="icon" onClick={toggleRightPanel} className="hidden lg:inline-flex" title="侧面板">
-          <PanelRight className="h-4 w-4" />
         </Button>
         <Button variant="ghost" size="icon" title="导出" onClick={() => useProjectStore.getState().setActiveNav('plan')}>
           <Download className="h-4 w-4" />

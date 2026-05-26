@@ -14,36 +14,25 @@ import SkillPanel from './components/entities/SkillPanel';
 import Login from './pages/Login';
 import Setup from './pages/Setup';
 
-function RightPanel() {
-  const { activeNav, selectedEntityId, rightPanelOpen } = useProjectStore();
+function MainContent() {
+  const { activeNav, selectedEntityId } = useProjectStore();
 
-  const content = (() => {
-    if (activeNav === 'chat') return null;
-    if (activeNav === 'skill') return <SkillPanel />;
-    if (activeNav === 'relationships') return <RelationshipGraph />;
-    if (activeNav === 'plan') return <PlanView />;
-    if (activeNav === 'project') return <ExportPanel />;
-    if (selectedEntityId) return <EntityDetail />;
-    return <EntityList />;
-  })();
-
-  if (activeNav === 'chat') return null;
-
-  return (
-    <>
-      <div className="hidden lg:flex w-80 border-l border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 overflow-hidden shrink-0">
-        {content}
-      </div>
-      {rightPanelOpen && (
-        <div className="fixed inset-0 z-40 lg:hidden">
-          <div className="absolute inset-0 bg-black/40" onClick={() => useProjectStore.getState().toggleRightPanel()} />
-          <div className="absolute right-0 top-0 bottom-0 w-80 max-w-[85vw] shadow-xl bg-zinc-50 dark:bg-zinc-900 overflow-hidden">
-            {content}
-          </div>
-        </div>
-      )}
-    </>
-  );
+  switch (activeNav) {
+    case 'chat':
+      return <ChatPanel />;
+    case 'skill':
+      return <SkillPanel />;
+    case 'relationships':
+      return <RelationshipGraph />;
+    case 'plan':
+      return <PlanView />;
+    case 'project':
+      return <ExportPanel />;
+    default:
+      // entity navs: characters/items/locations/lore/plots/chapters
+      if (selectedEntityId) return <EntityDetail />;
+      return <EntityList />;
+  }
 }
 
 function MainApp() {
@@ -57,8 +46,7 @@ function MainApp() {
         <TopBar />
         <div className="flex flex-1 overflow-hidden">
           <Sidebar />
-          <ChatPanel />
-          <RightPanel />
+          <MainContent />
         </div>
       </div>
     </ErrorBoundary>
