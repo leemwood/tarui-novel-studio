@@ -8,15 +8,17 @@ import { FileText, Plus } from 'lucide-react';
 export default function PlanView() {
   const { plans, entities, relationships, currentProject, savePlan } = useProjectStore();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const planList = plans || [];
+  const entityList = entities || [];
 
   const handleGeneratePlan = async () => {
     if (!currentProject) return;
-    const planContent = generatePlanMarkdown(currentProject, entities, relationships);
+    const planContent = generatePlanMarkdown(currentProject, entityList, relationships || []);
     await savePlan(`开发计划 - ${new Date().toLocaleDateString()}`, planContent);
-    window.location.reload(); // quick refresh - in production use store reload
+    window.location.reload();
   };
 
-  const selected = plans.find(p => p.id === selectedPlan);
+  const selected = planList.find(p => p.id === selectedPlan);
 
   return (
     <div className="h-full flex flex-col">
@@ -32,7 +34,7 @@ export default function PlanView() {
       <div className="flex flex-1 overflow-hidden">
         {/* Plan list */}
         <div className="w-48 border-r border-zinc-200 dark:border-zinc-700 overflow-y-auto p-2 space-y-1">
-          {plans.map(p => (
+          {planList.map(p => (
             <button
               key={p.id}
               onClick={() => setSelectedPlan(p.id)}
@@ -46,7 +48,7 @@ export default function PlanView() {
               <div className="text-[10px] text-zinc-400">{p.created_at?.slice(0, 10)}</div>
             </button>
           ))}
-          {plans.length === 0 && (
+          {planList.length === 0 && (
             <p className="text-xs text-zinc-400 text-center py-4">暂无计划</p>
           )}
         </div>

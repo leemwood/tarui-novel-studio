@@ -32,7 +32,8 @@ export default function EntityList() {
   const [newName, setNewName] = useState('');
 
   const entityType = navToEntityType[activeNav];
-  const filtered = entities
+  const list = entities || [];
+  const filtered = list
     .filter(e => entityType ? e.entity_type === entityType : true)
     .filter(e => e.name.toLowerCase().includes(search.toLowerCase()));
 

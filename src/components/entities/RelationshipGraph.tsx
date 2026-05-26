@@ -26,7 +26,8 @@ export default function RelationshipGraph() {
     await loadRelationships();
   };
 
-  const entityName = (id: string) => entities.find(e => e.id === id)?.name || id.slice(0, 8);
+  const entityList = entities || [];
+  const relList = relationships || [];
 
   return (
     <div className="h-full flex flex-col">
@@ -38,10 +39,10 @@ export default function RelationshipGraph() {
       </div>
 
       <div className="flex-1 overflow-y-auto p-3 space-y-2">
-        {relationships.length === 0 && (
+        {relList.length === 0 && (
           <p className="text-sm text-zinc-400 text-center py-8">暂无关系，点击 + 添加</p>
         )}
-        {relationships.map(rel => (
+        {relList.map(rel => (
           <div key={rel.id} className="flex items-center gap-2 p-2 rounded-md bg-zinc-50 dark:bg-zinc-800 text-sm">
             <span className="font-medium truncate">{entityName(rel.source_entity_id)}</span>
             <ArrowRight className="h-3 w-3 shrink-0 text-zinc-400" />
@@ -61,7 +62,7 @@ export default function RelationshipGraph() {
             <select className="w-full h-9 rounded-md border border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-700 px-2 text-sm"
               value={srcId} onChange={e => setSrcId(e.target.value)}>
               <option value="">选择...</option>
-              {entities.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
+              {entityList.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
             </select>
           </div>
           <div>
@@ -69,7 +70,7 @@ export default function RelationshipGraph() {
             <select className="w-full h-9 rounded-md border border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-700 px-2 text-sm"
               value={tgtId} onChange={e => setTgtId(e.target.value)}>
               <option value="">选择...</option>
-              {entities.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
+              {entityList.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
             </select>
           </div>
           <Input placeholder="关系类型（如：朋友、宿敌）" value={relType} onChange={e => setRelType(e.target.value)} />

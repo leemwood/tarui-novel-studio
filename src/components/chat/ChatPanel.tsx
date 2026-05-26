@@ -21,9 +21,11 @@ export default function ChatPanel() {
   }, [chatMessages.length]);
 
   // Combine DB messages with chat messages
+  const msgList = messages || [];
+  const chatList = chatMessages || [];
   const allMessages = [
-    ...messages.map(m => ({ id: m.id, role: m.role as 'user' | 'assistant' | 'system', content: m.content, toolCalls: undefined, timestamp: m.created_at })),
-    ...chatMessages.map(m => ({ id: m.id, role: m.role as 'user' | 'assistant' | 'system', content: m.content, toolCalls: m.toolCalls, timestamp: m.timestamp })),
+    ...msgList.map(m => ({ id: m.id, role: m.role as 'user' | 'assistant' | 'system', content: m.content, toolCalls: undefined, timestamp: m.created_at })),
+    ...chatList.map(m => ({ id: m.id, role: m.role as 'user' | 'assistant' | 'system', content: m.content, toolCalls: m.toolCalls, timestamp: m.timestamp })),
   ];
 
   const handleSend = async (content: string) => {
