@@ -75,6 +75,7 @@ func main() {
 		// Settings
 		r.Get("/api/settings", handler.HandleGetSettings)
 		r.Put("/api/settings", handler.HandleSaveSettings)
+		r.Post("/api/settings/test", handler.HandleTestConnection)
 
 		// Export
 		r.Get("/api/export/cursorrules", handler.HandleExportCursorRules)

@@ -3,14 +3,15 @@ import { useChatStore } from '../stores/useChatStore';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Badge } from '../components/ui/badge';
-import { Settings, Save, Key, Globe, Cpu, CheckCircle, Loader2 } from 'lucide-react';
+import { Settings, Save, Key, Globe, Cpu, CheckCircle, Loader2, Wifi } from 'lucide-react';
 import { api } from '../stores/useAuthStore';
 
 export default function SettingsPage() {
   const { settings, setSettings, loadSettings, saveSettings } = useChatStore();
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [testing, setTesting] = useState(false);
+  const [testResult, setTestResult] = useState<{ ok: boolean; msg: string } | null>(null);
 
   useEffect(() => { loadSettings(); }, []);
 
@@ -23,6 +24,31 @@ export default function SettingsPage() {
       setTimeout(() => setSaved(false), 2000);
     } catch {}
     setSaving(false);
+  };
+
+  const handleTest = async () => {
+    setTesting(true);
+    setTestResult(null);
+    try {
+      const res = await api('/settings/test', {
+        method: 'POST',
+        body: JSON.stringify({
+          api_provider: settings.apiProvider,
+          api_key: settings.apiKey,
+          api_model: settings.model,
+          api_base_url: settings.baseUrl,
+        }),
+      });
+      if (res.ok) {
+        setTestResult({ ok: true, msg: '连接成功' });
+      } else {
+        const data = await res.json().catch(() => ({ error: '请求失败' }));
+        setTestResult({ ok: false, msg: data.error || res.statusText });
+      }
+    } catch (e: any) {
+      setTestResult({ ok: false, msg: e.message });
+    }
+    setTesting(false);
   };
 
   return (
@@ -57,10 +83,16 @@ export default function SettingsPage() {
                 className="w-full h-10 rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 px-3 text-sm text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-400"
                 value={settings.apiProvider}
                 onChange={e => {
-                  setSettings({ apiProvider: e.target.value as 'openai' | 'claude' });
-                  saveSettings({ apiProvider: e.target.value as 'openai' | 'claude' });
+                  const v = e.target.value;
+                  setSettings({ apiProvider: v as any });
+                  saveSettings({ apiProvider: v as any });
+                  if (v === 'deepseek') {
+                    setSettings({ model: 'deepseek-v4-flash', baseUrl: 'https://api.deepseek.com/v1' });
+                    saveSettings({ model: 'deepseek-v4-flash', baseUrl: 'https://api.deepseek.com/v1' });
+                  }
                 }}
               >
+                <option value="deepseek">DeepSeek</option>
                 <option value="openai">OpenAI</option>
                 <option value="claude">Claude</option>
               </select>
@@ -92,7 +124,7 @@ export default function SettingsPage() {
                   saveSettings({ model: e.target.value });
                 }}
               />
-              <p className="text-[11px] text-zinc-400">如 gpt-4o、claude-3-opus-20240229</p>
+              <p className="text-[11px] text-zinc-400">如 deepseek-v4-flash、gpt-4o、claude-3-opus</p>
             </div>
 
             {/* Base URL */}
@@ -110,18 +142,27 @@ export default function SettingsPage() {
               <p className="text-[11px] text-zinc-400">兼容 OpenAI 格式的 API 地址</p>
             </div>
 
-            {/* Save button */}
-            <div className="pt-2">
-              <Button onClick={handleSave} disabled={saving} className="w-full sm:w-auto">
+            {/* Buttons */}
+            <div className="pt-2 flex flex-wrap items-center gap-3">
+              <Button onClick={handleSave} disabled={saving}>
                 {saving ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Save className="h-4 w-4 mr-1" />}
-                保存设置
+                保存
+              </Button>
+              <Button variant="outline" onClick={handleTest} disabled={testing}>
+                {testing ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Wifi className="h-4 w-4 mr-1" />}
+                测试连接
               </Button>
               {saved && (
-                <span className="inline-flex items-center gap-1 ml-3 text-sm text-green-600 dark:text-green-400">
+                <span className="inline-flex items-center gap-1 text-sm text-green-600 dark:text-green-400">
                   <CheckCircle className="h-4 w-4" /> 已保存
                 </span>
               )}
             </div>
+            {testResult && (
+              <div className={`text-sm rounded-lg px-3 py-2 ${testResult.ok ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300' : 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-300'}`}>
+                {testResult.ok ? '连接成功 — API 正常工作' : `连接失败: ${testResult.msg}`}
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -133,7 +174,7 @@ export default function SettingsPage() {
           <CardContent className="space-y-2 text-sm text-zinc-500 dark:text-zinc-400">
             <p>Tarui Novel Studio - AI 辅助小说创作工具</p>
             <p>Go 后端 + React 前端，SQLite 存储</p>
-            <p>支持 OpenAI / Claude API，可扩展 skill 工具</p>
+            <p>支持 DeepSeek / OpenAI / Claude API，可扩展 skill 工具</p>
           </CardContent>
         </Card>
       </div>

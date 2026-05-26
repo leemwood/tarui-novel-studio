@@ -26,10 +26,10 @@ interface ChatStore {
 
 export const useChatStore = create<ChatStore>((set, get) => ({
   settings: {
-    apiProvider: 'openai',
+    apiProvider: 'deepseek',
     apiKey: '',
-    model: 'gpt-4o',
-    baseUrl: 'https://api.openai.com/v1',
+    model: 'deepseek-v4-flash',
+    baseUrl: 'https://api.deepseek.com/v1',
   },
   chatMessages: [],
   isProcessing: false,
@@ -41,10 +41,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       const data = await res.json();
       set({
         settings: {
-          apiProvider: data.api_provider || 'openai',
+          apiProvider: data.api_provider || 'deepseek',
           apiKey: '',
-          model: data.api_model || 'gpt-4o',
-          baseUrl: data.api_base_url || 'https://api.openai.com/v1',
+          model: data.api_model || 'deepseek-v4-flash',
+          baseUrl: data.api_base_url || 'https://api.deepseek.com/v1',
         },
       });
     } catch {}

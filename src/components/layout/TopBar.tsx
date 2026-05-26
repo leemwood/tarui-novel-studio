@@ -91,8 +91,17 @@ export default function TopBar() {
             <select
               className="w-full h-9 rounded-md border border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-700 px-2 text-sm"
               value={settings.apiProvider}
-              onChange={e => { setSettings({ apiProvider: e.target.value as 'openai' | 'claude' }); saveSettings({ apiProvider: e.target.value as 'openai' | 'claude' }); }}
+              onChange={e => {
+                const v = e.target.value;
+                setSettings({ apiProvider: v as any });
+                saveSettings({ apiProvider: v as any });
+                if (v === 'deepseek') {
+                  setSettings({ model: 'deepseek-v4-flash', baseUrl: 'https://api.deepseek.com/v1' });
+                  saveSettings({ model: 'deepseek-v4-flash', baseUrl: 'https://api.deepseek.com/v1' });
+                }
+              }}
             >
+              <option value="deepseek">DeepSeek</option>
               <option value="openai">OpenAI</option>
               <option value="claude">Claude</option>
             </select>
