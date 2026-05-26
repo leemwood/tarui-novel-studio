@@ -262,19 +262,28 @@ func HandleMessages(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		sessionID := r.URL.Query().Get("session_id")
+		if sessionID != "" {
+			msgs, err := model.ListMessages(projectID)
+			if err != nil {
+				errResp(w, err.Error(), 500)
+				return
+			}
+			var filtered []model.Message
+			for _, m := range msgs {
+				if m.SessionID == sessionID {
+					filtered = append(filtered, m)
+				}
+			}
+			if filtered == nil {
+				filtered = []model.Message{}
+			}
+			jsonResp(w, filtered)
+			return
+		}
 		msgs, err := model.ListMessages(projectID)
 		if err != nil {
 			errResp(w, err.Error(), 500)
 			return
-		}
-		// Filter by session_id if provided
-		if sessionID != "" {
-			var filtered []model.Message
-			for _, m := range msgs {
-				// We need access to m.SessionID
-				filtered = append(filtered, m)
-			}
-			_ = filtered
 		}
 		jsonResp(w, msgs)
 	case http.MethodPost:

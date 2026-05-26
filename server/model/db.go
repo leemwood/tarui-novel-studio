@@ -117,6 +117,10 @@ func migrate() error {
 			return err
 		}
 	}
+
+	// Add session_id column to messages if missing (for existing databases)
+	DB.Exec("ALTER TABLE messages ADD COLUMN session_id TEXT NOT NULL DEFAULT ''")
+
 	log.Println("database migration complete")
 	return nil
 }
