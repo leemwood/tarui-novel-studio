@@ -94,7 +94,8 @@ export type NavSection =
   | 'relationships'
   | 'plan'
   | 'chat'
-  | 'skill';
+  | 'skill'
+  | 'settings';
 
 export interface SidebarSection {
   id: NavSection;
@@ -125,5 +126,6 @@ export const DEFAULT_NAV_ITEMS: SidebarSection[] = [
   { id: 'chapters', label: '章节', icon: 'FileText' },
   { id: 'relationships', label: '关系', icon: 'Share2' },
   { id: 'skill', label: '技能', icon: 'Zap' },
+  { id: 'settings', label: '设置', icon: 'Settings' },
   { id: 'plan', label: '开发计划', icon: 'ClipboardList' },
 ];

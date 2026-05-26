@@ -15,6 +15,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   FileText: Icons.FileText,
   Share2: Icons.Share2,
   Zap: Icons.Zap,
+  Settings: Icons.Settings,
   ClipboardList: Icons.ClipboardList,
 };
 

@@ -11,6 +11,7 @@ import RelationshipGraph from './components/entities/RelationshipGraph';
 import PlanView from './components/entities/PlanView';
 import ExportPanel from './components/entities/ExportPanel';
 import SkillPanel from './components/entities/SkillPanel';
+import SettingsPage from './pages/SettingsPage';
 import Login from './pages/Login';
 import Setup from './pages/Setup';
 
@@ -26,6 +27,8 @@ function MainContent() {
       return <RelationshipGraph />;
     case 'plan':
       return <PlanView />;
+    case 'settings':
+      return <SettingsPage />;
     case 'project':
       return <ExportPanel />;
     default:
