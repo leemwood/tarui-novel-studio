@@ -109,10 +109,11 @@ export interface AiToolCall {
 }
 
 export interface ChatSettings {
-  apiProvider: 'openai' | 'claude';
+  apiProvider: 'openai' | 'claude' | 'deepseek';
   apiKey: string;
   model: string;
   baseUrl: string;
+  thinkingMode: boolean;
 }
 
 export const DEFAULT_NAV_ITEMS: SidebarSection[] = [

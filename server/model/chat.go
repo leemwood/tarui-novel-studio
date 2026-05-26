@@ -262,7 +262,17 @@ func callAI(settings *Setting, messages []openAIMessage) (*openAIMessage, error)
 		Tools:    buildTools(),
 	}
 
-	body, _ := json.Marshal(reqBody)
+	var body []byte
+	if settings.ThinkingMode {
+		// Inject reasoning_effort into JSON
+		var m map[string]interface{}
+		data, _ := json.Marshal(reqBody)
+		json.Unmarshal(data, &m)
+		m["reasoning_effort"] = "medium"
+		body, _ = json.Marshal(m)
+	} else {
+		body, _ = json.Marshal(reqBody)
+	}
 	httpReq, err := http.NewRequest("POST", url, bytes.NewReader(body))
 	if err != nil {
 		return nil, err

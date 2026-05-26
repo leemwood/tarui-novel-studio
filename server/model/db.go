@@ -30,10 +30,11 @@ func migrate() error {
 		)`,
 		`CREATE TABLE IF NOT EXISTS settings (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			api_provider TEXT NOT NULL DEFAULT 'openai',
+			api_provider TEXT NOT NULL DEFAULT 'deepseek',
 			api_key TEXT NOT NULL DEFAULT '',
-			api_model TEXT NOT NULL DEFAULT 'gpt-4o',
-			api_base_url TEXT NOT NULL DEFAULT 'https://api.openai.com/v1'
+			api_model TEXT NOT NULL DEFAULT 'deepseek-v4-flash',
+			api_base_url TEXT NOT NULL DEFAULT 'https://api.deepseek.com/v1',
+			thinking_mode INTEGER NOT NULL DEFAULT 0
 		)`,
 		`CREATE TABLE IF NOT EXISTS projects (
 			id TEXT PRIMARY KEY,

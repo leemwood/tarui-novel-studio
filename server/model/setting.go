@@ -14,6 +14,7 @@ type Setting struct {
 	APIKey      string `json:"api_key,omitempty"`
 	APIModel    string `json:"api_model"`
 	APIBaseURL  string `json:"api_base_url"`
+	ThinkingMode bool `json:"thinking_mode"`
 }
 
 func init() {
@@ -22,35 +23,34 @@ func init() {
 
 func GetSettings() (*Setting, error) {
 	var s Setting
-	err := DB.QueryRow("SELECT id, api_provider, api_key, api_model, api_base_url FROM settings LIMIT 1").
-		Scan(&s.ID, &s.APIProvider, &s.APIKey, &s.APIModel, &s.APIBaseURL)
+	err := DB.QueryRow("SELECT id, api_provider, api_key, api_model, api_base_url, thinking_mode FROM settings LIMIT 1").
+		Scan(&s.ID, &s.APIProvider, &s.APIKey, &s.APIModel, &s.APIBaseURL, &s.ThinkingMode)
 	if err != nil {
-		// Return defaults if no settings row
 		return &Setting{
 			APIProvider: "deepseek",
 			APIModel:    "deepseek-v4-flash",
 			APIBaseURL:  "https://api.deepseek.com/v1",
+			ThinkingMode: false,
 		}, nil
 	}
 	return &s, nil
 }
 
-func SaveSettings(provider, apiKey, model, baseURL string) (*Setting, error) {
-	// Upsert - always update the single row
+func SaveSettings(provider, apiKey, model, baseURL string, thinkingMode bool) (*Setting, error) {
 	var count int
 	DB.QueryRow("SELECT COUNT(*) FROM settings").Scan(&count)
 	if count == 0 {
 		_, err := DB.Exec(
-			"INSERT INTO settings (api_provider, api_key, api_model, api_base_url) VALUES (?, ?, ?, ?)",
-			provider, apiKey, model, baseURL,
+			"INSERT INTO settings (api_provider, api_key, api_model, api_base_url, thinking_mode) VALUES (?, ?, ?, ?, ?)",
+			provider, apiKey, model, baseURL, thinkingMode,
 		)
 		if err != nil {
 			return nil, err
 		}
 	} else {
 		_, err := DB.Exec(
-			"UPDATE settings SET api_provider = ?, api_key = ?, api_model = ?, api_base_url = ? WHERE id = 1",
-			provider, apiKey, model, baseURL,
+			"UPDATE settings SET api_provider = ?, api_key = ?, api_model = ?, api_base_url = ?, thinking_mode = ? WHERE id = 1",
+			provider, apiKey, model, baseURL, thinkingMode,
 		)
 		if err != nil {
 			return nil, err

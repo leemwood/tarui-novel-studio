@@ -127,6 +127,26 @@ export default function SettingsPage() {
               <p className="text-[11px] text-zinc-400">如 deepseek-v4-flash、gpt-4o、claude-3-opus</p>
             </div>
 
+            {/* Thinking Mode */}
+            <div className="flex items-center justify-between py-2">
+              <div>
+                <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">思考模式</label>
+                <p className="text-[11px] text-zinc-400">启用后 AI 会展示推理过程</p>
+              </div>
+              <button
+                role="switch"
+                aria-checked={settings.thinkingMode}
+                onClick={() => {
+                  const v = !settings.thinkingMode;
+                  setSettings({ thinkingMode: v });
+                  saveSettings({ thinkingMode: v });
+                }}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.thinkingMode ? 'bg-zinc-900 dark:bg-zinc-100' : 'bg-zinc-300 dark:bg-zinc-600'}`}
+              >
+                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.thinkingMode ? 'translate-x-6' : 'translate-x-1'}`} />
+              </button>
+            </div>
+
             {/* Base URL */}
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5">

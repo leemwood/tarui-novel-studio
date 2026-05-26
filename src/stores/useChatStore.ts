@@ -30,6 +30,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     apiKey: '',
     model: 'deepseek-v4-flash',
     baseUrl: 'https://api.deepseek.com/v1',
+    thinkingMode: false,
   },
   chatMessages: [],
   isProcessing: false,
@@ -45,6 +46,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
           apiKey: '',
           model: data.api_model || 'deepseek-v4-flash',
           baseUrl: data.api_base_url || 'https://api.deepseek.com/v1',
+          thinkingMode: data.thinking_mode || false,
         },
       });
     } catch {}
@@ -61,6 +63,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
           api_key: merged.apiKey,
           api_model: merged.model,
           api_base_url: merged.baseUrl,
+          thinking_mode: merged.thinkingMode,
         }),
       });
       set({ settings: merged });
