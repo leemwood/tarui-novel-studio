@@ -118,7 +118,7 @@ function extractDescription(text: string): string {
   return text.slice(0, 80);
 }
 
-function generateMockResponse(content: string, toolCalls: AiToolCall[]): string {
+function generateMockResponse(_content: string, toolCalls: AiToolCall[]): string {
   const results = toolCalls.map(tc => {
     switch (tc.name) {
       case 'create_entity':
