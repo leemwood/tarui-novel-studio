@@ -1,0 +1,22 @@
+# Cross-compilation configuration for Android targets
+# Uses Termux-native aarch64-linux-android toolchain
+
+[target.aarch64-linux-android]
+linker = "aarch64-linux-android-clang"
+ar = "aarch64-linux-android-ar"
+
+[target.armv7-linux-androideabi]
+linker = "armv7a-linux-androideabi-clang"
+ar = "armv7-linux-androideabi-ar"
+
+[target.x86_64-linux-android]
+linker = "x86_64-linux-android-clang"
+ar = "x86_64-linux-android-ar"
+
+[target.i686-linux-android]
+linker = "i686-linux-android-clang"
+ar = "i686-linux-android-ar"
+
+[env]
+# Let sqlx use the right linker
+SQLX_OFFLINE = "true"
