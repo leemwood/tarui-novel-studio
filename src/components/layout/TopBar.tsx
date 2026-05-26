@@ -61,8 +61,8 @@ export default function TopBar() {
         <div className="flex-1 hidden lg:block" />
 
         {/* Right actions */}
-        <Button variant="ghost" size="sm" onClick={() => setShowSettings(true)} className="hidden sm:inline-flex">
-          <Settings className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">API设置</span>
+        <Button variant="ghost" size="icon" onClick={() => setShowSettings(true)} title="API设置">
+          <Settings className="h-4 w-4" />
         </Button>
         <Button variant="ghost" size="icon" title="导出" onClick={() => useProjectStore.getState().setActiveNav('plan')}>
           <Download className="h-4 w-4" />
