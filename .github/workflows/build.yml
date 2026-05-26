@@ -61,10 +61,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cargo-android-
 
+      - name: Install Tauri CLI
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-tauri@2
+
       - name: Build Android APK
-        run: |
-          cd src-tauri
-          cargo tauri android build --apk
+        run: cargo tauri android build --apk
+        working-directory: src-tauri
         env:
           ANDROID_HOME: ${{ env.ANDROID_HOME }}
           ANDROID_NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/26.1.10909125
@@ -121,6 +125,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cargo-linux-
 
+      - name: Install Tauri CLI
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-tauri@2
+
       - name: Build Linux
         run: cargo tauri build
         env:
@@ -167,6 +176,11 @@ jobs:
           key: ${{ runner.os }}-cargo-windows-${{ hashFiles('src-tauri\Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-cargo-windows-
+
+      - name: Install Tauri CLI
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-tauri@2
 
       - name: Build Windows
         run: cargo tauri build
