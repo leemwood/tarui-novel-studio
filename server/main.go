@@ -86,6 +86,12 @@ func main() {
 		r.Post("/api/skills/install", handler.HandleInstallSkill)
 		r.Post("/api/skills/run", handler.HandleRunSkill)
 		r.Get("/api/skills/search", handler.HandleSearchSkills)
+
+		// Files
+		r.Post("/api/files/upload", handler.HandleUploadFile)
+		r.Get("/api/files", handler.HandleListFiles)
+		r.Get("/api/files/{id}", handler.HandleGetFileContent)
+		r.Delete("/api/files/{id}", handler.HandleDeleteFile)
 	})
 
 	port := os.Getenv("PORT")

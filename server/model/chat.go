@@ -163,8 +163,24 @@ func ProcessChat(projectID, userMessage string, history []ChatMessage) (*ChatMes
 		return nil, fmt.Errorf("failed to get settings: %w", err)
 	}
 
+	// Load file contents as context
+	fileContext := ""
+	files, _ := ListFiles(projectID)
+	if len(files) > 0 {
+		var parts []string
+		for _, f := range files {
+			content, err := ReadFileContent(f.ID)
+			if err == nil && len(content) > 0 {
+				parts = append(parts, fmt.Sprintf("### 文件: %s\n%s", f.Name, content))
+			}
+		}
+		if len(parts) > 0 {
+			fileContext = "## 已上传的参考文件\n\n" + strings.Join(parts, "\n\n")
+		}
+	}
+
 	// Build message list from history + new message
-	msgs := buildMessages(history, userMessage)
+	msgs := buildMessages(history, userMessage, fileContext)
 
 	// Call AI API with tool support (up to 5 rounds for tool calls)
 	maxRounds := 5
@@ -204,11 +220,10 @@ func ProcessChat(projectID, userMessage string, history []ChatMessage) (*ChatMes
 
 // ─── Build Messages ────────────────────────────────────────────
 
-func buildMessages(history []ChatMessage, userMessage string) []openAIMessage {
+func buildMessages(history []ChatMessage, userMessage, fileContext string) []openAIMessage {
 	var msgs []openAIMessage
-	msgs = append(msgs, openAIMessage{
-		Role:    "system",
-		Content: `你是一个小说创作助手。你可以帮助用户管理小说项目中的角色、道具、地点、设定、剧情等元素。
+
+	systemContent := `你是一个小说创作助手。你可以帮助用户管理小说项目中的角色、道具、地点、设定、剧情等元素。
 
 你可以使用以下工具：
 1. create_entity - 创建新的实体（角色/道具/地点/设定/剧情）
@@ -216,8 +231,13 @@ func buildMessages(history []ChatMessage, userMessage string) []openAIMessage {
 3. create_relationship - 创建实体间关系
 4. generate_plan - 生成开发计划
 
-请根据用户的需求主动使用工具。每次对话请使用中文回复，保持简洁有建设性。`,
-	})
+请根据用户的需求主动使用工具。每次对话请使用中文回复，保持简洁有建设性。`
+
+	if fileContext != "" {
+		systemContent += "\n\n" + fileContext
+	}
+
+	msgs = append(msgs, openAIMessage{Role: "system", Content: systemContent})
 
 	for _, h := range history {
 		msgs = append(msgs, openAIMessage{Role: h.Role, Content: h.Content})
