@@ -3,7 +3,6 @@ mod db;
 
 use commands::AppState;
 use db::Database;
-use std::sync::Mutex;
 use tauri::Manager;
 
 fn init_database(app: &tauri::App) -> Database {
@@ -24,36 +23,30 @@ pub fn run() {
         .setup(|app| {
             let database = init_database(app);
             app.manage(AppState {
-                db: Mutex::new(database),
+                db: tokio::sync::Mutex::new(database),
             });
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            // Projects
             commands::create_project,
             commands::list_projects,
             commands::get_project,
             commands::update_project,
             commands::delete_project,
-            // Entities
             commands::create_entity,
             commands::list_entities,
             commands::get_entity,
             commands::update_entity,
             commands::delete_entity,
-            // Relationships
             commands::create_relationship,
             commands::list_relationships,
             commands::delete_relationship,
-            // Chapters
             commands::create_chapter,
             commands::list_chapters,
             commands::update_chapter,
-            // Messages
             commands::save_message,
             commands::list_messages,
             commands::clear_messages,
-            // Plans
             commands::save_plan,
             commands::list_plans,
             commands::get_plan,

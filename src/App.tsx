@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useProjectStore } from './stores/useProjectStore';
+import ErrorBoundary from './components/ErrorBoundary';
 import Sidebar from './components/layout/Sidebar';
 import TopBar from './components/layout/TopBar';
 import ChatPanel from './components/chat/ChatPanel';
@@ -48,13 +49,15 @@ export default function App() {
   }, []);
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 overflow-hidden">
-      <TopBar />
-      <div className="flex flex-1 overflow-hidden">
-        <Sidebar />
-        <ChatPanel />
-        <RightPanel />
+    <ErrorBoundary>
+      <div className="h-screen w-screen flex flex-col bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 overflow-hidden">
+        <TopBar />
+        <div className="flex flex-1 overflow-hidden">
+          <Sidebar />
+          <ChatPanel />
+          <RightPanel />
+        </div>
       </div>
-    </div>
+    </ErrorBoundary>
   );
 }
