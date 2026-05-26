@@ -37,6 +37,9 @@ func ListProjects() ([]Project, error) {
 		}
 		projects = append(projects, p)
 	}
+	if projects == nil {
+		projects = []Project{}
+	}
 	return projects, nil
 }
 

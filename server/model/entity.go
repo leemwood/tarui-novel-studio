@@ -51,6 +51,9 @@ func ListEntities(projectID string) ([]Entity, error) {
 		}
 		entities = append(entities, e)
 	}
+	if entities == nil {
+		entities = []Entity{}
+	}
 	return entities, nil
 }
 
@@ -117,6 +120,9 @@ func ListRelationships(projectID string) ([]Relationship, error) {
 		}
 		rels = append(rels, r)
 	}
+	if rels == nil {
+		rels = []Relationship{}
+	}
 	return rels, nil
 }
 
@@ -164,6 +170,9 @@ func ListChapters(projectID string) ([]Chapter, error) {
 		}
 		chapters = append(chapters, c)
 	}
+	if chapters == nil {
+		chapters = []Chapter{}
+	}
 	return chapters, nil
 }
 
@@ -210,6 +219,9 @@ func ListMessages(projectID string) ([]Message, error) {
 		}
 		msgs = append(msgs, m)
 	}
+	if msgs == nil {
+		msgs = []Message{}
+	}
 	return msgs, nil
 }
 
@@ -251,6 +263,9 @@ func ListPlans(projectID string) ([]Plan, error) {
 			return nil, err
 		}
 		plans = append(plans, p)
+	}
+	if plans == nil {
+		plans = []Plan{}
 	}
 	return plans, nil
 }
