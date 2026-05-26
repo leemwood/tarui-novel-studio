@@ -227,6 +227,30 @@ func buildMessages(history []ChatMessage, userMessage string) []openAIMessage {
 	return msgs
 }
 
+// ─── Build Tools (static + dynamic skills) ─────────────────────
+
+func buildTools() []openAITool {
+	tools := make([]openAITool, len(chatTools))
+	copy(tools, chatTools)
+
+	skillTools := GetSkillToolDescriptions()
+	for _, st := range skillTools {
+		name, _ := st["name"].(string)
+		desc, _ := st["description"].(string)
+		params := st["parameters"]
+
+		tools = append(tools, openAITool{
+			Type: "function",
+			Function: openAIToolDef{
+				Name:        name,
+				Description: desc,
+				Parameters:  params,
+			},
+		})
+	}
+	return tools
+}
+
 // ─── Call AI API ───────────────────────────────────────────────
 
 func callAI(settings *Setting, messages []openAIMessage) (*openAIMessage, error) {
@@ -235,7 +259,7 @@ func callAI(settings *Setting, messages []openAIMessage) (*openAIMessage, error)
 	reqBody := openAIRequest{
 		Model:    settings.APIModel,
 		Messages: messages,
-		Tools:    chatTools,
+		Tools:    buildTools(),
 	}
 
 	body, _ := json.Marshal(reqBody)
@@ -345,6 +369,17 @@ func executeTool(projectID, toolName, argsJSON string) string {
 		return fmt.Sprintf(`{"success":true,"plan":%s}`, string(data))
 
 	default:
+		// Handle dynamically generated skill tools
+		if strings.HasPrefix(toolName, "run_skill_") {
+			slug := strings.TrimPrefix(toolName, "run_skill_")
+			input, _ := args["input"].(string)
+			result, err := RunSkill(slug, input)
+			if err != nil {
+				return fmt.Sprintf(`{"error":"%s"}`, err.Error())
+			}
+			data, _ := json.Marshal(result)
+			return fmt.Sprintf(`{"success":true,"skill_result":%s}`, string(data))
+		}
 		return fmt.Sprintf(`{"error":"unknown tool: %s"}`, toolName)
 	}
 }

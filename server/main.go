@@ -79,6 +79,12 @@ func main() {
 		// Export
 		r.Get("/api/export/cursorrules", handler.HandleExportCursorRules)
 		r.Get("/api/export/prompt", handler.HandleExportPrompt)
+
+		// Skills
+		r.Get("/api/skills", handler.HandleListSkills)
+		r.Post("/api/skills/install", handler.HandleInstallSkill)
+		r.Post("/api/skills/run", handler.HandleRunSkill)
+		r.Get("/api/skills/search", handler.HandleSearchSkills)
 	})
 
 	port := os.Getenv("PORT")

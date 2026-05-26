@@ -6,6 +6,7 @@ import { X } from 'lucide-react';
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   FolderOpen: Icons.FolderOpen,
+  MessageSquare: Icons.MessageSquare,
   Users: Icons.Users,
   Package: Icons.Package,
   MapPin: Icons.MapPin,
@@ -13,6 +14,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Route: Icons.Route,
   FileText: Icons.FileText,
   Share2: Icons.Share2,
+  Zap: Icons.Zap,
   ClipboardList: Icons.ClipboardList,
 };
 

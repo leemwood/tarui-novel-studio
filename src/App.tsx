@@ -10,6 +10,7 @@ import EntityDetail from './components/entities/EntityDetail';
 import RelationshipGraph from './components/entities/RelationshipGraph';
 import PlanView from './components/entities/PlanView';
 import ExportPanel from './components/entities/ExportPanel';
+import SkillPanel from './components/entities/SkillPanel';
 import Login from './pages/Login';
 import Setup from './pages/Setup';
 
@@ -17,12 +18,16 @@ function RightPanel() {
   const { activeNav, selectedEntityId, rightPanelOpen } = useProjectStore();
 
   const content = (() => {
+    if (activeNav === 'chat') return null;
+    if (activeNav === 'skill') return <SkillPanel />;
     if (activeNav === 'relationships') return <RelationshipGraph />;
     if (activeNav === 'plan') return <PlanView />;
     if (activeNav === 'project') return <ExportPanel />;
     if (selectedEntityId) return <EntityDetail />;
     return <EntityList />;
   })();
+
+  if (activeNav === 'chat') return null;
 
   return (
     <>

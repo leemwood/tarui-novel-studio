@@ -83,16 +83,18 @@ export interface EntityContent {
 }
 
 // Navigation items
-export type NavSection = 
+export type NavSection =
   | 'project'
-  | 'characters' 
-  | 'items' 
-  | 'locations' 
-  | 'lore' 
-  | 'plots' 
-  | 'chapters' 
-  | 'relationships' 
-  | 'plan';
+  | 'characters'
+  | 'items'
+  | 'locations'
+  | 'lore'
+  | 'plots'
+  | 'chapters'
+  | 'relationships'
+  | 'plan'
+  | 'chat'
+  | 'skill';
 
 export interface SidebarSection {
   id: NavSection;
@@ -114,6 +116,7 @@ export interface ChatSettings {
 
 export const DEFAULT_NAV_ITEMS: SidebarSection[] = [
   { id: 'project', label: '项目', icon: 'FolderOpen' },
+  { id: 'chat', label: '聊天', icon: 'MessageSquare' },
   { id: 'characters', label: '角色', icon: 'Users' },
   { id: 'items', label: '道具', icon: 'Package' },
   { id: 'locations', label: '地点', icon: 'MapPin' },
@@ -121,5 +124,6 @@ export const DEFAULT_NAV_ITEMS: SidebarSection[] = [
   { id: 'plots', label: '剧情', icon: 'Route' },
   { id: 'chapters', label: '章节', icon: 'FileText' },
   { id: 'relationships', label: '关系', icon: 'Share2' },
+  { id: 'skill', label: '技能', icon: 'Zap' },
   { id: 'plan', label: '开发计划', icon: 'ClipboardList' },
 ];
