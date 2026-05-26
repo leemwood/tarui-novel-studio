@@ -192,21 +192,22 @@ type Message struct {
 	ProjectID string `json:"project_id"`
 	Role      string `json:"role"`
 	Content   string `json:"content"`
+	SessionID string `json:"session_id"`
 	CreatedAt string `json:"created_at"`
 }
 
-func SaveMessage(projectID, role, content string) (*Message, error) {
+func SaveMessage(projectID, role, content, sessionID string) (*Message, error) {
 	id := newID()
 	now := time.Now().UTC().Format(time.RFC3339)
-	_, err := DB.Exec("INSERT INTO messages (id, project_id, role, content, created_at) VALUES (?, ?, ?, ?, ?)", id, projectID, role, content, now)
+	_, err := DB.Exec("INSERT INTO messages (id, project_id, role, content, session_id, created_at) VALUES (?, ?, ?, ?, ?, ?)", id, projectID, role, content, sessionID, now)
 	if err != nil {
 		return nil, err
 	}
-	return &Message{ID: id, ProjectID: projectID, Role: role, Content: content, CreatedAt: now}, nil
+	return &Message{ID: id, ProjectID: projectID, Role: role, Content: content, SessionID: sessionID, CreatedAt: now}, nil
 }
 
 func ListMessages(projectID string) ([]Message, error) {
-	rows, err := DB.Query("SELECT id, project_id, role, content, created_at FROM messages WHERE project_id = ? ORDER BY created_at", projectID)
+	rows, err := DB.Query("SELECT id, project_id, role, content, COALESCE(session_id, ''), created_at FROM messages WHERE project_id = ? ORDER BY created_at", projectID)
 	if err != nil {
 		return nil, err
 	}
@@ -214,7 +215,7 @@ func ListMessages(projectID string) ([]Message, error) {
 	var msgs []Message
 	for rows.Next() {
 		var m Message
-		if err := rows.Scan(&m.ID, &m.ProjectID, &m.Role, &m.Content, &m.CreatedAt); err != nil {
+		if err := rows.Scan(&m.ID, &m.ProjectID, &m.Role, &m.Content, &m.SessionID, &m.CreatedAt); err != nil {
 			return nil, err
 		}
 		msgs = append(msgs, m)

@@ -197,7 +197,7 @@ func ProcessChat(projectID, userMessage string, history []ChatMessage) (*ChatMes
 				msg.Content = "已执行完成。"
 			}
 			// Save to DB
-			SaveMessage(projectID, "assistant", msg.Content)
+			SaveMessage(projectID, "assistant", msg.Content, "")
 			return &msg, nil
 		}
 

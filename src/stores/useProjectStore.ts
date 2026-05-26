@@ -52,6 +52,15 @@ interface ProjectStore {
   loadMessages: () => Promise<void>;
   clearMessages: () => Promise<void>;
 
+  // Sessions
+  sessions: any[];
+  currentSessionId: string | null;
+  loadSessions: () => Promise<void>;
+  createSession: (title?: string) => Promise<any>;
+  switchSession: (id: string) => Promise<void>;
+  deleteSession: (id: string) => Promise<void>;
+  searchMessages: (query: string) => Promise<any[]>;
+
   savePlan: (title: string, content: string) => Promise<Plan>;
   loadPlans: () => Promise<void>;
 }
@@ -68,6 +77,8 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
   chapters: [],
   messages: [],
   plans: [],
+  sessions: [],
+  currentSessionId: null,
   loading: false,
 
   sidebarOpen: false,
@@ -164,11 +175,11 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
   },
 
   saveMessage: async (role, content) => {
-    const { currentProject } = get();
+    const { currentProject, currentSessionId } = get();
     if (!currentProject) throw new Error('No project selected');
     const msg = await apiFetch<Message>('/messages', {
       method: 'POST',
-      body: JSON.stringify({ project_id: currentProject.id, role, content }),
+      body: JSON.stringify({ project_id: currentProject.id, role, content, session_id: currentSessionId || '' }),
     });
     set((s) => ({ messages: [...s.messages, msg] }));
     return msg;
@@ -186,6 +197,52 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
     if (!currentProject) return;
     await apiFetch(`/messages?project_id=${encodeURIComponent(currentProject.id)}`, { method: 'DELETE' });
     set({ messages: [] });
+  },
+
+  // Sessions
+  loadSessions: async () => {
+    const { currentProject } = get();
+    if (!currentProject) return;
+    const sessions = await apiFetch<any[]>(`/sessions?project_id=${encodeURIComponent(currentProject.id)}`);
+    set({ sessions });
+    if (sessions.length > 0 && !get().currentSessionId) {
+      set({ currentSessionId: sessions[0].id });
+    }
+  },
+
+  createSession: async (title) => {
+    const { currentProject } = get();
+    if (!currentProject) throw new Error('No project selected');
+    const session = await apiFetch<any>('/sessions', {
+      method: 'POST',
+      body: JSON.stringify({ project_id: currentProject.id, title: title || '新会话' }),
+    });
+    set((s) => ({ sessions: [session, ...s.sessions], currentSessionId: session.id, messages: [] }));
+    return session;
+  },
+
+  switchSession: async (id) => {
+    set({ currentSessionId: id, messages: [] });
+    const msgs = await apiFetch<Message[]>(`/messages?session_id=${encodeURIComponent(id)}`);
+    set({ messages: msgs });
+  },
+
+  deleteSession: async (id) => {
+    await apiFetch(`/sessions/${id}`, { method: 'DELETE' });
+    set((s) => {
+      const sessions = s.sessions.filter((x: any) => x.id !== id);
+      const newId = s.currentSessionId === id ? (sessions[0]?.id || null) : s.currentSessionId;
+      return { sessions, currentSessionId: newId, messages: newId !== s.currentSessionId ? [] : s.messages };
+    });
+  },
+
+  searchMessages: async (query) => {
+    const { currentProject } = get();
+    if (!currentProject) return [];
+    return apiFetch<any[]>('/sessions/search', {
+      method: 'POST',
+      body: JSON.stringify({ project_id: currentProject.id, query }),
+    });
   },
 
   savePlan: async (title, content) => {

@@ -87,6 +87,13 @@ func main() {
 		r.Post("/api/skills/run", handler.HandleRunSkill)
 		r.Get("/api/skills/search", handler.HandleSearchSkills)
 
+		// Sessions
+		r.Get("/api/sessions", handler.HandleListSessions)
+		r.Post("/api/sessions", handler.HandleCreateSession)
+		r.Put("/api/sessions/{id}", handler.HandleRenameSession)
+		r.Delete("/api/sessions/{id}", handler.HandleDeleteSession)
+		r.Post("/api/sessions/search", handler.HandleSearchMessages)
+
 		// Files
 		r.Post("/api/files/upload", handler.HandleUploadFile)
 		r.Get("/api/files", handler.HandleListFiles)

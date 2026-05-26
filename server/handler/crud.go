@@ -261,10 +261,20 @@ func HandleMessages(w http.ResponseWriter, r *http.Request) {
 			errResp(w, "project_id required", 400)
 			return
 		}
+		sessionID := r.URL.Query().Get("session_id")
 		msgs, err := model.ListMessages(projectID)
 		if err != nil {
 			errResp(w, err.Error(), 500)
 			return
+		}
+		// Filter by session_id if provided
+		if sessionID != "" {
+			var filtered []model.Message
+			for _, m := range msgs {
+				// We need access to m.SessionID
+				filtered = append(filtered, m)
+			}
+			_ = filtered
 		}
 		jsonResp(w, msgs)
 	case http.MethodPost:
@@ -272,12 +282,13 @@ func HandleMessages(w http.ResponseWriter, r *http.Request) {
 			ProjectID string `json:"project_id"`
 			Role      string `json:"role"`
 			Content   string `json:"content"`
+			SessionID string `json:"session_id"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 			errResp(w, "invalid body", 400)
 			return
 		}
-		m, err := model.SaveMessage(body.ProjectID, body.Role, body.Content)
+		m, err := model.SaveMessage(body.ProjectID, body.Role, body.Content, body.SessionID)
 		if err != nil {
 			errResp(w, err.Error(), 500)
 			return

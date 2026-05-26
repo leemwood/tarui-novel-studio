@@ -31,7 +31,7 @@ func HandleChat(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Save user message
-	model.SaveMessage(body.ProjectID, "user", body.Message)
+	model.SaveMessage(body.ProjectID, "user", body.Message, "")
 
 	// Process chat
 	result, err := model.ProcessChat(body.ProjectID, body.Message, body.History)
