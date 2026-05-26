@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useProjectStore } from './stores/useProjectStore';
+import { useAuthStore } from './stores/useAuthStore';
 import ErrorBoundary from './components/ErrorBoundary';
 import Sidebar from './components/layout/Sidebar';
 import TopBar from './components/layout/TopBar';
@@ -9,6 +10,8 @@ import EntityDetail from './components/entities/EntityDetail';
 import RelationshipGraph from './components/entities/RelationshipGraph';
 import PlanView from './components/entities/PlanView';
 import ExportPanel from './components/entities/ExportPanel';
+import Login from './pages/Login';
+import Setup from './pages/Setup';
 
 function RightPanel() {
   const { activeNav, selectedEntityId, rightPanelOpen } = useProjectStore();
@@ -23,12 +26,9 @@ function RightPanel() {
 
   return (
     <>
-      {/* Desktop: always visible */}
       <div className="hidden lg:flex w-80 border-l border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 overflow-hidden shrink-0">
         {content}
       </div>
-
-      {/* Tablet/Mobile: overlay when toggled */}
       {rightPanelOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
           <div className="absolute inset-0 bg-black/40" onClick={() => useProjectStore.getState().toggleRightPanel()} />
@@ -41,12 +41,10 @@ function RightPanel() {
   );
 }
 
-export default function App() {
+function MainApp() {
   const { loadProjects } = useProjectStore();
 
-  useEffect(() => {
-    loadProjects();
-  }, []);
+  useEffect(() => { loadProjects(); }, []);
 
   return (
     <ErrorBoundary>
@@ -60,4 +58,35 @@ export default function App() {
       </div>
     </ErrorBoundary>
   );
+}
+
+export default function App() {
+  const { token, initialized, checkHealth } = useAuthStore();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    checkHealth().finally(() => setLoading(false));
+  }, []);
+
+  // Loading
+  if (loading) {
+    return (
+      <div className="h-screen w-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-900">
+        <div className="animate-spin h-6 w-6 border-2 border-zinc-300 border-t-zinc-600 rounded-full" />
+      </div>
+    );
+  }
+
+  // Not initialized → Setup
+  if (initialized === false) {
+    return <Setup />;
+  }
+
+  // Not logged in → Login
+  if (!token) {
+    return <Login />;
+  }
+
+  // Authenticated
+  return <MainApp />;
 }
